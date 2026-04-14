@@ -326,6 +326,7 @@ const fileFormats = {
 function getFileType(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   if (['mp3','wav','flac','aac','wma','opus','ogg','m4a','amr','aiff','mp2'].includes(ext)) return 'audio';
+  if (['mpeg','mpg'].includes(ext)) return 'mpeg';
   if (['mp4','avi','mov','mkv','webm','flv','wmv','3gp','ts','m2ts'].includes(ext)) return 'video';
   if (['jpg','jpeg','png','webp','gif','bmp','tiff','ico','heic'].includes(ext)) return 'image';
   if (['pdf'].includes(ext)) return 'pdf';
@@ -348,6 +349,7 @@ function handleFile(file) {
   const optsDiv = document.getElementById('formatOpts');
   optsDiv.innerHTML = '';
   let outputFormats = fileFormats[type] || ['mp3','mp4','jpg','pdf'];
+  if (type === 'mpeg') outputFormats = ['mp3','mp4','wav','avi'];
   outputFormats.forEach((fmt, i) => {
     const btn = document.createElement('button');
     btn.className = 'conv-opt' + (i === 0 ? ' active' : '');
@@ -373,6 +375,7 @@ async function startRealConvert() {
     let endpoint = '';
     if (type === 'audio') endpoint = '/convert/audio';
     else if (type === 'video') endpoint = '/convert/video';
+    else if (type === 'mpeg') endpoint = selectedFormat === 'mp3' ? '/convert/extract-audio' : '/convert/video';
     else if (type === 'image') endpoint = '/convert/image';
     else if (type === 'word') endpoint = '/pdf/word-to-pdf';
     else if (type === 'pdf') {
