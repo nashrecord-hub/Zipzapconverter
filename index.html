@@ -510,14 +510,19 @@ async function startRealConvert() {
   try {
     const formData = new FormData();
     formData.append('file', currentFile);
+<<<<<<< HEAD
 formData.append('files', currentFile);
+formData.append('files', currentFile);
+=======
+formData.append('files', currentFile);
+>>>>>>> 90b1801b35afcc82ac84b2daca4e769a59d9255b
     formData.append('format', selectedFormat);
     const type = getFileType(currentFile);
     let endpoint = '';
     if (type === 'audio') endpoint = '/convert/audio';
     else if (type === 'video') endpoint = '/convert/video';
     else if (type === 'mpeg') endpoint = selectedFormat === 'mp3' ? '/convert/extract-audio' : '/convert/video';
-    else if (type === 'image') endpoint = '/convert/image';
+    else if (type === 'image') endpoint = selectedFormat === 'pdf' ? '/pdf/image-to-pdf' : '/convert/image';
     else if (type === 'word') endpoint = '/pdf/word-to-pdf';
     else if (type === 'pdf') { if (selectedFormat === 'compress') endpoint = '/pdf/compress'; else if (selectedFormat === 'to-images') endpoint = '/pdf/pdf-to-images'; else endpoint = '/pdf/compress'; }
     const response = await fetch(API + endpoint, { method: 'POST', body: formData });
