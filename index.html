@@ -404,7 +404,7 @@ const API = 'https://zipzap-server-production.up.railway.app';
 const fileFormats = {
   audio: ['mp3','wav','flac','aac','wma','opus','ogg','m4a','amr','aiff'],
   video: ['mp4','avi','mov','mkv','webm','flv','wmv','3gp','ts'],
-  image: ['jpg','png','webp','bmp','tiff'],
+  image: ['jpg','png','webp','bmp','tiff','pdf'],
   pdf: ['compress','split','to-images'],
   word: ['pdf']
 };
@@ -416,6 +416,7 @@ function getFileType(file) {
   if (['jpg','jpeg','png','webp','gif','bmp','tiff','ico','heic'].includes(ext)) return 'image';
   if (['pdf'].includes(ext)) return 'pdf';
   if (['doc','docx','rtf','odt'].includes(ext)) return 'word';
+  if (['txt','csv','rtf'].includes(ext)) return 'text';
   return 'unknown';
 }
 let currentFile = null, selectedFormat = null, downloadUrl = null;
@@ -516,7 +517,7 @@ async function startRealConvert() {
     if (type === 'audio') endpoint = '/convert/audio';
     else if (type === 'video') endpoint = '/convert/video';
     else if (type === 'mpeg') endpoint = selectedFormat === 'mp3' ? '/convert/extract-audio' : '/convert/video';
-    else if (type === 'image') endpoint = '/convert/image';
+    else if (type === 'image') endpoint = selectedFormat === 'pdf' ? '/pdf/image-to-pdf' : '/convert/image';
     else if (type === 'word') endpoint = '/pdf/word-to-pdf';
     else if (type === 'pdf') { if (selectedFormat === 'compress') endpoint = '/pdf/compress'; else if (selectedFormat === 'to-images') endpoint = '/pdf/pdf-to-images'; else endpoint = '/pdf/compress'; }
     const response = await fetch(API + endpoint, { method: 'POST', body: formData });
