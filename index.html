@@ -406,7 +406,8 @@ const fileFormats = {
   video: ['mp4','avi','mov','mkv','webm','flv','wmv','3gp','ts'],
   image: ['jpg','png','webp','bmp','tiff','pdf'],
   pdf: ['compress','split','to-images'],
-  word: ['pdf']
+  word: ['pdf'],
+  document: ['pdf']
 };
 function getFileType(file) {
   const ext = file.name.split('.').pop().toLowerCase();
@@ -416,6 +417,7 @@ function getFileType(file) {
   if (['jpg','jpeg','png','webp','gif','bmp','tiff','ico','heic'].includes(ext)) return 'image';
   if (['pdf'].includes(ext)) return 'pdf';
   if (['doc','docx','rtf','odt'].includes(ext)) return 'word';
+  if (['txt','csv','xlsx','xls','pptx','ppt'].includes(ext)) return 'document';
   if (['txt','csv','rtf'].includes(ext)) return 'text';
   return 'unknown';
 }
@@ -525,6 +527,7 @@ async function startRealConvert() {
     else if (type === 'mpeg') endpoint = selectedFormat === 'mp3' ? '/convert/extract-audio' : '/convert/video';
     else if (type === 'image') endpoint = selectedFormat === 'pdf' ? '/pdf/image-to-pdf' : '/convert/image';
     else if (type === 'word') endpoint = '/pdf/word-to-pdf';
+    else if (type === 'document') endpoint = '/convert/document';
     else if (type === 'pdf') { if (selectedFormat === 'compress') endpoint = '/pdf/compress'; else if (selectedFormat === 'to-images') endpoint = '/pdf/pdf-to-images'; else endpoint = '/pdf/compress'; }
     const response = await fetch(API + endpoint, { method: 'POST', body: formData });
     clearInterval(anim);
