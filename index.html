@@ -480,6 +480,12 @@ function handleFile(file) {
   document.getElementById('fileName').textContent = file.name;
   const optsDiv = document.getElementById('formatOpts');
   optsDiv.innerHTML = '';
+  if (type === 'unknown' || type === 'text') {
+    document.getElementById('sFormat').style.display = 'none';
+    document.getElementById('sIdle').style.display = 'block';
+    alert('Format non supporté. Formats acceptés: audio, vidéo, images, PDF, Word.');
+    return;
+  }
   let outputFormats = fileFormats[type] || ['mp3','mp4','jpg','pdf'];
   if (type === 'mpeg') outputFormats = ['mp3','mp4','wav','avi'];
   outputFormats.forEach((fmt, i) => {
