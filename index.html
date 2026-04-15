@@ -339,6 +339,34 @@ let selectedFormat = null;
 let downloadUrl = null;
 let isPro = localStorage.getItem('zipzap_pro') === 'true';
 
+function getDailyCount() {
+  const today = new Date().toDateString();
+  const saved = JSON.parse(localStorage.getItem('zipzap_daily') || '{"date":"","count":0}');
+  if (saved.date !== today) return 0;
+  return saved.count;
+}
+
+function incrementDailyCount() {
+  const today = new Date().toDateString();
+  const count = getDailyCount() + 1;
+  localStorage.setItem('zipzap_daily', JSON.stringify({ date: today, count }));
+}
+
+function checkLimit() {
+  if (isPro) return true;
+  const count = getDailyCount();
+  if (count >= 10) {
+    document.getElementById('activateMsg').innerHTML = '';
+    document.getElementById('accessCodeInput').value = '';
+    document.getElementById('activate').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      document.getElementById('activateMsg').innerHTML = '<span style="color:#f0c040">⚠️ Limite de 10 conversions/jour atteinte. Entre ton code Pro pour continuer !</span>';
+    }, 600);
+    return false;
+  }
+  return true;
+}
+
 function handleFile(file) {
   if (!file) return;
   currentFile = file;
@@ -362,6 +390,7 @@ function handleFile(file) {
 
 async function startRealConvert() {
   if (!currentFile || !selectedFormat) return;
+  if (!checkLimit()) return;
   document.getElementById('sFormat').style.display = 'none';
   document.getElementById('sConv').classList.add('on');
   buildTeeth();
@@ -391,6 +420,7 @@ async function startRealConvert() {
     const blob = await response.blob();
     downloadUrl = URL.createObjectURL(blob);
     setTimeout(() => {
+      incrementDailyCount();
       document.getElementById('sConv').classList.remove('on');
       document.getElementById('sDone').classList.add('on');
       document.getElementById('btnDownload').onclick = () => { const a = document.createElement('a'); a.href = downloadUrl; a.download = 'converted.' + selectedFormat; a.click(); };
